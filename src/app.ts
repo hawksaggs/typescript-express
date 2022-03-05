@@ -2,18 +2,18 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as mongoose from "mongoose";
 import Controller from './interfaces/controller.interface';
+import errorMiddleware from './middlewares/error.middleware';
 
 class App {
     private app: express.Application;
-    private port: number;
 
-    constructor(controllers, port) {
+    constructor(controllers) {
         this.app = express();
-        this.port = port;
 
         this.connectDB();
         this.initializeMiddleware();
         this.initializeControllers(controllers);
+        this.initializeErrorHandling();
     }
 
     private static loggerMiddleware(request: express.Request, response: express.Response, next) {
@@ -39,12 +39,16 @@ class App {
 
         mongoose.connect(`${MONGO_DB_URL}`, () => {
             console.log('Database is conncted');
-        });
+        })
+    }
+
+    private initializeErrorHandling(){
+        this.app.use(errorMiddleware);
     }
 
     public listen() {
-        this.app.listen(this.port, () => {
-            console.log(`App listening on the port: ${this.port}`);
+        this.app.listen(process.env.PORT, () => {
+            console.log(`App listening on the port: ${process.env.PORT}`);
         });
     }
 }

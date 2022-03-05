@@ -7,6 +7,6 @@ validateEnv();
 
 const app =  new App([
     new PostsController()
-], 4200);
+]);
 
 app.listen();
