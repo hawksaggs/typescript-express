@@ -3,6 +3,8 @@ import Post from "./post.interface";
 import postModel from "./posts.model";
 import Controller from "../interfaces/controller.interface";
 import PostNotFoundException from "../exceptions/PostNotFoundException";
+import validationMiddleware from "../middlewares/validation.middleware";
+import CreatePostDto from "./posts.dto";
 
 class PostsController implements Controller {
     public path = '/posts';
@@ -23,8 +25,8 @@ class PostsController implements Controller {
         // this.router.get(this.path, this.getAllPosts.bind(this));
         this.router.get(this.path, this.getAllPosts);
         this.router.get(`${this.path}/:id`, this.getPostById);
-        this.router.post(this.path, this.createPost);
-        this.router.patch(`${this.path}/:id`, this.modifyPost);
+        this.router.post(this.path, validationMiddleware(CreatePostDto) , this.createPost);
+        this.router.patch(`${this.path}/:id`, validationMiddleware(CreatePostDto, true), this.modifyPost);
         this.router.delete(`${this.path}/:id`, this.deletePost);
     }
 
