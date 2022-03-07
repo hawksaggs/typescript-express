@@ -1,13 +1,14 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as mongoose from "mongoose";
+import * as cookieParser from 'cookie-parser';
 import Controller from './interfaces/controller.interface';
 import errorMiddleware from './middlewares/error.middleware';
 
 class App {
     private app: express.Application;
 
-    constructor(controllers) {
+    constructor(controllers: Controller[]) {
         this.app = express();
 
         this.connectDB();
@@ -16,7 +17,7 @@ class App {
         this.initializeErrorHandling();
     }
 
-    private static loggerMiddleware(request: express.Request, response: express.Response, next) {
+    private static loggerMiddleware(request: express.Request, response: express.Response, next: express.NextFunction) {
         console.log(`${request.method} ${request.path}`);
         next();
     }
@@ -24,6 +25,7 @@ class App {
     private initializeMiddleware() {
         this.app.use(App.loggerMiddleware);
         this.app.use(bodyParser.json());
+        this.app.use(cookieParser());
     }
 
     private initializeControllers(controllers: Controller[]){
